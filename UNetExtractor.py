@@ -17,7 +17,7 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
         non_unet_tensors = {}
         for key in f.keys():
             tensor = f.get_tensor(key)
-            if model_type == "sd15":
+            if model_type in ["sd15", "flux"]:
                 if key.startswith("model.diffusion_model."):
                     new_key = key.replace("model.diffusion_model.", "")
                     unet_tensors[new_key] = tensor
@@ -38,11 +38,11 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
     print("Processing complete!")
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract UNet and create a model without UNet from SafeTensors file for SD 1.5 or SDXL")
+    parser = argparse.ArgumentParser(description="Extract UNet and create a model without UNet from SafeTensors file for SD 1.5, SDXL, or FLUX")
     parser.add_argument("input_file", help="Input SafeTensors file")
     parser.add_argument("unet_output_file", help="Output SafeTensors file for UNet")
     parser.add_argument("non_unet_output_file", help="Output SafeTensors file for model without UNet")
-    parser.add_argument("--model_type", choices=["sd15", "sdxl"], required=True, help="Model type: sd15 or sdxl")
+    parser.add_argument("--model_type", choices=["sd15", "sdxl", "flux"], required=True, help="Model type: sd15, sdxl, or flux")
     parser.add_argument("--use_cpu", action="store_true", help="Force CPU usage even if CUDA is available")
     
     args = parser.parse_args()
