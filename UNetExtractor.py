@@ -1,3 +1,15 @@
+"""
+UNet Extractor for Stable Diffusion 1.5, SDXL, and FLUX models
+
+This script processes SafeTensors files to extract UNet components.
+
+For full functionality, it's recommended to install psutil:
+    pip install psutil
+
+If psutil is not installed, the script will still work but with limited
+resource reporting capabilities.
+"""
+
 import argparse
 import logging
 from pathlib import Path
@@ -10,7 +22,12 @@ import multiprocessing
 import time
 import os
 import traceback
-import psutil
+
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
 
 try:
     import torch
@@ -23,9 +40,14 @@ def setup_logging(verbose):
     logging.basicConfig(level=level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def check_resources():
-    cpu_count = psutil.cpu_count(logical=False)
-    total_ram = psutil.virtual_memory().total / (1024 ** 3)  # in GB
-    available_ram = psutil.virtual_memory().available / (1024 ** 3)  # in GB
+    cpu_count = os.cpu_count() or 1
+    
+    if PSUTIL_AVAILABLE:
+        total_ram = psutil.virtual_memory().total / (1024 ** 3)  # in GB
+        available_ram = psutil.virtual_memory().available / (1024 ** 3)  # in GB
+    else:
+        total_ram = "Unknown"
+        available_ram = "Unknown"
 
     gpu_info = "Not available"
     if CUDA_AVAILABLE:
@@ -87,10 +109,13 @@ def save_tensors(tensors, output_file):
 
 def check_disk_space(file_path, required_space):
     try:
-        total, used, free = psutil.disk_usage(file_path.parent)
-        if free < required_space:
-            logging.warning(f"Low disk space. Required: {required_space / (1024**3):.2f} GB, Available: {free / (1024**3):.2f} GB")
-            return False
+        if PSUTIL_AVAILABLE:
+            total, used, free = psutil.disk_usage(file_path.parent)
+            if free < required_space:
+                logging.warning(f"Low disk space. Required: {required_space / (1024**3):.2f} GB, Available: {free / (1024**3):.2f} GB")
+                return False
+        else:
+            logging.warning("Unable to check disk space (psutil not installed). Proceeding without check.")
         return True
     except Exception as e:
         logging.error(f"Error checking disk space: {str(e)}")
@@ -210,15 +235,15 @@ def main():
     cpu_count, total_ram, available_ram, gpu_info = check_resources()
     print(f"\nSystem Resources:")
     print(f"CPU Cores: {cpu_count}")
-    print(f"Total RAM: {total_ram:.2f} GB")
-    print(f"Available RAM: {available_ram:.2f} GB")
+    print(f"Total RAM: {total_ram}")
+    print(f"Available RAM: {available_ram}")
     print(f"GPU: {gpu_info}")
 
     use_gpu = get_user_preference() if CUDA_AVAILABLE else False
     
     # Auto-detect number of threads if not specified
     if args.num_threads is None:
-        args.num_threads = max(1, multiprocessing.cpu_count() - 1)  # Leave one core free
+        args.num_threads = max(1, os.cpu_count() - 1)  # Leave one core free
     
     try:
         process_model(args.input_file, args.unet_output_file, args.non_unet_output_file, 
