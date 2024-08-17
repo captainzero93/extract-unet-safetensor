@@ -2,8 +2,6 @@
 
 This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
-UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
-
 ![FLUX Example](https://raw.githubusercontent.com/captainzero93/extract-unet-safetensor/main/fluxeample.png)
 
 ## Why UNet Extraction?
@@ -33,6 +31,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 - User choice between CPU-only and GPU-assisted processing
 - GPU and CPU usage limiting options
 - Enhanced error handling and logging
+- Detailed debugging information for troubleshooting
 
 ## Requirements
 
@@ -45,22 +44,39 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 
 1. Clone this repository or download the `UNetExtractor.py` script.
 
-2. Install the required libraries:
-
+2. It's recommended to create a new virtual environment:
    ```
-   pip install safetensors
-   ```
-
-3. Optionally, if you want CUDA support, install PyTorch:
-
-   ```
-   pip install torch torchvision torchaudio
+   python -m venv unet_extractor_env
    ```
 
-4. Optional: Install psutil for enhanced system resource reporting
+3. Activate the virtual environment:
+   - On Windows:
+     ```
+     unet_extractor_env\Scripts\activate
+     ```
+   - On macOS and Linux:
+     ```
+     source unet_extractor_env/bin/activate
+     ```
+
+4. Install the required libraries with specific versions for debugging:
+
    ```
-   pip install psutil
+   pip install numpy==1.23.5 torch==2.0.1 safetensors==0.3.1
    ```
+
+5. If you're using CUDA, install the CUDA-enabled version of PyTorch:
+   ```
+   pip install torch==2.0.1+cu117 -f https://download.pytorch.org/whl/cu117/torch_stable.html
+   ```
+   Replace `cu117` with your CUDA version (e.g., `cu116`, `cu118`) if different.
+
+6. Optionally, install psutil for enhanced system resource reporting:
+   ```
+   pip install psutil==5.9.0
+   ```
+
+Note: The versions above are examples and may need to be adjusted based on your system requirements and CUDA version. These specific versions are recommended for debugging purposes as they are known to work together. For regular use, you may use the latest versions of these libraries.
 
 ## Usage
 
@@ -112,6 +128,34 @@ python UNetExtractor.py path/to/flux_model.safetensors path/to/output_flux_unet.
 10. The remaining non-UNet tensors are saved to a separate SafeTensors file.
 11. RAM offloading is implemented to manage memory usage, especially for large models.
 
+## Debugging Information
+
+When running the script with the `--verbose` flag, you'll see detailed debugging information, including:
+
+- System resource information (CPU cores, RAM, GPU)
+- Processing details for each tensor (key, shape, classification)
+- Running count of UNet and non-UNet tensors
+- GPU memory usage (if applicable)
+- Detailed error messages and stack traces in case of exceptions
+
+Example debug output:
+
+```
+2024-08-17 21:06:30,500 - DEBUG - Current UNet count: 770
+2024-08-17 21:06:30,500 - DEBUG - ---
+2024-08-17 21:06:31,142 - DEBUG - Processing key: vector_in.out_layer.weight
+2024-08-17 21:06:31,142 - DEBUG - Tensor shape: torch.Size([3072, 3072])
+2024-08-17 21:06:31,172 - DEBUG - Classified as non-UNet tensor
+2024-08-17 21:06:31,172 - DEBUG - Current UNet count: 770
+2024-08-17 21:06:31,172 - DEBUG - ---
+2024-08-17 21:06:31,203 - INFO - Total tensors processed: 780
+2024-08-17 21:06:31,203 - INFO - UNet tensors: 770
+2024-08-17 21:06:31,203 - INFO - Non-UNet tensors: 10
+2024-08-17 21:06:31,203 - INFO - Unique key prefixes found: double_blocks, final_layer, guidance_in, img_in, single_blocks, time_in, txt_in, vector_in
+```
+
+This detailed output helps in identifying issues with tensor classification, resource usage, and overall processing flow.
+
 ## Notes
 
 - The script now prompts the user to choose between CPU-only and GPU-assisted processing if CUDA is available.
@@ -124,19 +168,27 @@ python UNetExtractor.py path/to/flux_model.safetensors path/to/output_flux_unet.
 
 If you encounter any issues:
 
-1. Ensure you have the latest version of the `safetensors` library installed.
-2. If using CUDA, make sure you have a compatible version of PyTorch installed.
-3. Check that your input file is a valid SafeTensors file for the specified model type.
-4. Make sure you have read permissions for the input file and write permissions for the output directory.
-5. If you're having issues with CUDA, try running with CPU-only processing to see if it resolves the problem.
-6. If you encounter any "module not found" errors, ensure all required libraries are installed.
-7. For detailed information about the processing, use the `--verbose` flag.
+1. Ensure you're using the recommended library versions as specified in the Installation section.
+2. Run the script with the `--verbose` flag to get detailed debugging information.
+3. Check for compatibility between your CUDA version and the installed PyTorch version.
+4. If you encounter a NumPy version compatibility error with PyTorch, such as:
+   ```
+   A module that was compiled using NumPy 1.x cannot be run in
+   NumPy 2.0.1 as it may crash.
+   ```
+   Try downgrading NumPy to version 1.23.5 as recommended in the installation instructions.
+5. Ensure you have the latest version of the `safetensors` library installed.
+6. Check that your input file is a valid SafeTensors file for the specified model type.
+7. Make sure you have read permissions for the input file and write permissions for the output directory.
+8. If you're having issues with CUDA, try running with CPU-only processing to see if it resolves the problem.
+9. If you encounter any "module not found" errors, ensure all required libraries are installed in your virtual environment.
+10. Check the console output for any error messages or stack traces that can help identify the issue.
 
-If you continue to experience issues, please open an issue on the GitHub repository with details about your system configuration and the full error message.
+If you continue to experience issues after trying these steps, please open an issue on the GitHub repository with details about your system configuration, the command you're using, and the full error message or debugging output.
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome!
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/captainzero93/extract-unet-safetensor/issues) if you want to contribute.
 
 ## License
 
@@ -153,4 +205,5 @@ If you use UNet Extractor and Remover in your research or projects, please cite 
 ## Acknowledgements
 
 - This script uses the `safetensors` library developed by the Hugging Face team.
-- Inspired by Stable Diffusion and the community.
+- Inspired by Stable Diffusion and the FLUX model community.
+- Special thanks to all contributors and users who have provided feedback and suggestions.
