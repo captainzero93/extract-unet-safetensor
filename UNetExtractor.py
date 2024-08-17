@@ -22,6 +22,19 @@ def check_cuda():
     else:
         logging.warning("CUDA is not available. Using CPU.")
 
+def is_unet_tensor(key, model_type):
+    if model_type == "sd15":
+        return key.startswith("model.diffusion_model.")
+    elif model_type == "flux":
+        return any(key.startswith(prefix) for prefix in [
+            "unet.", "diffusion_model.", "model.diffusion_model.",
+            "double_blocks.", "single_blocks.", "final_layer.",
+            "guidance_in.", "img_in."
+        ])
+    elif model_type == "sdxl":
+        return key.startswith("model.diffusion_model.")
+    return False
+
 def process_model(input_file, unet_output_file, non_unet_output_file, model_type, use_cpu, verbose):
     device = "cpu" if use_cpu or not CUDA_AVAILABLE else "cuda"
     logging.info(f"Processing {input_file} on {device}")
@@ -45,15 +58,7 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
                     logging.debug(f"Processing key: {key}")
                     logging.debug(f"Tensor shape: {tensor.shape}")
                 
-                is_unet = False
-                if model_type == "sd15":
-                    is_unet = key.startswith("model.diffusion_model.")
-                elif model_type == "flux":
-                    is_unet = any(key.startswith(prefix) for prefix in ["unet.", "diffusion_model.", "model.diffusion_model."])
-                elif model_type == "sdxl":
-                    is_unet = key.startswith("model.diffusion_model.")
-                
-                if is_unet:
+                if is_unet_tensor(key, model_type):
                     if model_type == "sd15":
                         new_key = key.replace("model.diffusion_model.", "")
                         unet_tensors[new_key] = tensor
@@ -76,6 +81,9 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
             logging.info(f"Non-UNet tensors: {total_tensors - unet_count}")
             logging.info(f"Unique key prefixes found: {', '.join(sorted(key_prefixes))}")
 
+        if unet_count == 0:
+            logging.warning("No UNet tensors were identified. Please check if the model type is correct.")
+
         logging.info(f"Saving extracted UNet to {unet_output_file}")
         save_file(unet_tensors, unet_output_file)
         
@@ -92,8 +100,8 @@ def main():
     parser.add_argument("input_file", type=Path, help="Input SafeTensors file")
     parser.add_argument("unet_output_file", type=Path, help="Output SafeTensors file for UNet")
     parser.add_argument("non_unet_output_file", type=Path, help="Output SafeTensors file for model without UNet")
-    parser.add_argument("--model_type", choices=["sd15", "sdxl", "flux"], required=True, help="Model type: sd15, sdxl, or flux")
-    parser.add_argument("--use_cpu", action="store_true", help="Force CPU usage even if CUDA is available")
+    parser.add_argument("--model_type", choices=["sd15", "flux", "sdxl"], required=True, help="Type of model")
+    parser.add_argument("--use_cpu", action="store_true", help="Force use of CPU even if CUDA is available")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     
     args = parser.parse_args()
