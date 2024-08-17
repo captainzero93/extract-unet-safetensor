@@ -84,3 +84,5 @@ This project is licensed under the MIT License - see the [LICENSE](link-to-your-
 
 - This script uses the `safetensors` library developed by the Hugging Face team.
 - Inspired by the Stable Diffusion and SDXL projects from Stability AI.
+- DBacon1052 and BlastedRemnants on Reddit for posting about the idea https://www.reddit.com/r/StableDiffusion/comments/1eu4idh/comment/liic8fj/
+
