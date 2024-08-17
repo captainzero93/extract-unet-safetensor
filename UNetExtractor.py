@@ -17,10 +17,15 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
         non_unet_tensors = {}
         for key in f.keys():
             tensor = f.get_tensor(key)
-            if model_type in ["sd15", "flux"]:
+            if model_type == "sd15":
                 if key.startswith("model.diffusion_model."):
                     new_key = key.replace("model.diffusion_model.", "")
                     unet_tensors[new_key] = tensor
+                else:
+                    non_unet_tensors[key] = tensor
+            elif model_type == "flux":
+                if key.startswith("unet."):
+                    unet_tensors[key] = tensor
                 else:
                     non_unet_tensors[key] = tensor
             elif model_type == "sdxl":
