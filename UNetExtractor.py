@@ -3,7 +3,7 @@ UNet Extractor for Stable Diffusion 1.5, SDXL, and FLUX models
 
 This script processes SafeTensors files to extract UNet components.
 
-For full functionality, it's recommended to install psutil:
+For enhanced system resource reporting, it's recommended to install psutil:
     pip install psutil
 
 If psutil is not installed, the script will still work but with limited
@@ -108,23 +108,6 @@ def save_tensors(tensors, output_file):
         logging.debug(traceback.format_exc())
         raise
 
-def check_disk_space(file_path, required_space):
-    try:
-        if PSUTIL_AVAILABLE:
-            # Convert Path object to string
-            path_str = str(file_path.parent)
-            total, used, free = psutil.disk_usage(path_str)
-            if free < required_space:
-                logging.warning(f"Low disk space. Required: {required_space / (1024**3):.2f} GB, Available: {free / (1024**3):.2f} GB")
-                return False
-            logging.info(f"Sufficient disk space. Required: {required_space / (1024**3):.2f} GB, Available: {free / (1024**3):.2f} GB")
-        else:
-            logging.warning("Unable to check disk space (psutil not installed). Proceeding without check.")
-        return True
-    except Exception as e:
-        logging.error(f"Error checking disk space: {str(e)}")
-        return True  # Changed to True to allow operation to continue if check fails
-
 def process_model(input_file, unet_output_file, non_unet_output_file, model_type, use_gpu, verbose, num_threads, gpu_limit, cpu_limit):
     device = "cuda" if use_gpu and CUDA_AVAILABLE else "cpu"
     logging.info(f"Processing {input_file} on {device}")
@@ -198,12 +181,6 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
         if unet_count.value == 0:
             logging.warning("No UNet tensors were identified. Please check if the model type is correct.")
 
-        # Check disk space before saving
-        required_space = sum(tensor.numel() * tensor.element_size() for tensor in unet_tensors.values())
-        required_space += sum(tensor.numel() * tensor.element_size() for tensor in non_unet_tensors.values())
-        if not check_disk_space(unet_output_file, required_space):
-            logging.warning("Proceeding with save operation despite potential disk space issue.")
-        
         logging.info(f"Saving extracted UNet to {unet_output_file}")
         save_tensors(unet_tensors, unet_output_file)
         
