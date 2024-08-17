@@ -1,24 +1,24 @@
-# UNet Extractor and Remover for Stable Diffusion 1.5 and SDXL
+# UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX
 
-This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
+This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ## Why UNet Extraction?
 
-Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders like T5xxl. Here's why:
+Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders. This is particularly beneficial for models like FLUX, which boasts 12 billion parameters. Here's why:
 
-1. Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. For models using T5xxl, the text encoder alone can be 5-10GB. By extracting the UNet, you can reuse the same text encoder for multiple models, saving 5-10GB per additional model.
+1. Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. By extracting the UNet, you can reuse the same text encoder for multiple models, saving gigabytes of space per additional model.
 
 2. Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
 
-3. Practical Example: Two full checkpoints (e.g., nf4 schnell and dev Flux) might take up 22GB. Using extracted UNets instead, the same two models could occupy only 12GB, plus a single 5GB text encoder shared between them.
+3. Practical Example: Multiple full checkpoints of large models like FLUX can quickly consume tens of gigabytes. Using extracted UNets instead can significantly reduce storage requirements.
 
-4. Future-Proofing: As models grow in complexity, the space-saving benefits of using UNets become even more significant.
+4. Future-Proofing: As models like FLUX continue to grow in complexity, the space-saving benefits of using UNets become even more significant.
 
-This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits.
+This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits across SD 1.5, SDXL, and FLUX models.
 
 ## Features
 
-- Supports both SD 1.5 and SDXL model architectures
+- Supports SD 1.5, SDXL, and FLUX model architectures
 - Extracts UNet tensors from SafeTensors files
 - Creates a separate SafeTensors file with non-UNet components
 - Saves the extracted UNet as a new SafeTensors file
@@ -52,7 +52,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 Run the script from the command line with the following syntax:
 
 ```
-python UNetExtractor.py <input_file> <unet_output_file> <non_unet_output_file> --model_type <sd15|sdxl> [--use_cpu]
+python UNetExtractor.py <input_file> <unet_output_file> <non_unet_output_file> --model_type <sd15|sdxl|flux> [--use_cpu]
 ```
 
 ### Arguments
@@ -60,7 +60,7 @@ python UNetExtractor.py <input_file> <unet_output_file> <non_unet_output_file> -
 - `<input_file>`: Path to the input SafeTensors file (full model)
 - `<unet_output_file>`: Path where the extracted UNet will be saved
 - `<non_unet_output_file>`: Path where the model without UNet will be saved
-- `--model_type`: Specify the model type, either `sd15` for Stable Diffusion 1.5 or `sdxl` for Stable Diffusion XL
+- `--model_type`: Specify the model type, either `sd15` for Stable Diffusion 1.5, `sdxl` for Stable Diffusion XL, or `flux` for FLUX models
 - `--use_cpu`: (Optional) Force CPU usage even if CUDA is available
 
 ### Examples
@@ -70,9 +70,19 @@ For Stable Diffusion 1.5 using CUDA (if available):
 python UNetExtractor.py path/to/sd15_model.safetensors path/to/output_sd15_unet.safetensors path/to/output_sd15_non_unet.safetensors --model_type sd15
 ```
 
-For Stable Diffusion XL using CPU:
+For Stable Diffusion XL using CUDA (if available):
 ```
-python UNetExtractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors path/to/output_sdxl_non_unet.safetensors --model_type sdxl --use_cpu
+python UNetExtractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors path/to/output_sdxl_non_unet.safetensors --model_type sdxl
+```
+
+For FLUX models using CUDA (if available):
+```
+python UNetExtractor.py path/to/flux_model.safetensors path/to/output_flux_unet.safetensors path/to/output_flux_non_unet.safetensors --model_type flux
+```
+
+For any model type using CPU (even if CUDA is available):
+```
+python UNetExtractor.py path/to/model.safetensors path/to/output_unet.safetensors path/to/output_non_unet.safetensors --model_type <sd15|sdxl|flux> --use_cpu
 ```
 
 ## How It Works
@@ -80,10 +90,18 @@ python UNetExtractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.
 1. The script checks for CUDA availability (if PyTorch is installed) and uses it if present (unless `--use_cpu` is specified).
 2. It opens the input SafeTensors file using the `safetensors` library.
 3. The script iterates through all tensors in the file, separating UNet-related tensors from other tensors.
-4. For SD 1.5, it removes the "model.diffusion_model." prefix from UNet tensor keys.
+4. For SD 1.5 and FLUX models, it removes the "model.diffusion_model." prefix from UNet tensor keys.
 5. For SDXL, it keeps the original key names for both UNet and non-UNet tensors.
 6. The extracted UNet tensors are saved to a new SafeTensors file.
 7. The remaining non-UNet tensors are saved to a separate SafeTensors file.
+
+## Notes
+
+- The script automatically uses CUDA if available and PyTorch is installed, which can significantly speed up the process for large models like FLUX.
+- If you prefer to use CPU even when CUDA is available, use the `--use_cpu` flag.
+- If PyTorch is not installed or CUDA is not available, the script will automatically use CPU processing.
+- Ensure you have sufficient disk space to save both output files, especially for large models like FLUX.
+- Processing large models may take some time, depending on your system's performance and whether CUDA is used.
 
 ## Notes
 
