@@ -118,7 +118,7 @@ python UNetExtractor.py path/to/flux_model.safetensors path/to/output_flux_unet.
 
 ## How It Works
 
-1. The script checks for CUDA availability (if PyTorch is installed) and prompts the user to choose between CPU-only and GPU-assisted processing.
+1. The script checks for CUDA availability (if PyTorch is installed) and prompts to choose between CPU-only and GPU-assisted processing.
 2. It determines the optimal number of threads to use based on the system's CPU cores (if not manually specified).
 3. It opens the input SafeTensors file using the `safetensors` library.
 4. The script iterates through all tensors in the file, separating UNet-related tensors from other tensors.
