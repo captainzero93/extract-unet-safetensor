@@ -176,7 +176,7 @@ If you're still encountering problems after trying these steps, please open an i
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/captainzero93/unet-extractor/issues) if you want to contribute.
+Contributions, issues, and feature requests are welcome!
 
 ## License
 
