@@ -2,7 +2,7 @@
 This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ## Why UNet Extraction?
-Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders. This is particularly beneficial for models like FLUX, which boasts a large number of parameters. Here's why:
+Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders. This is particularly beneficial for models like FLUX, which has a large number of parameters. Here's why:
 
 Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. By extracting the UNet, you can reuse the same text encoder for multiple models, saving gigabytes of space per additional model.
 Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
