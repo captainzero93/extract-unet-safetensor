@@ -162,7 +162,7 @@ This detailed output helps in identifying issues with tensor classification, res
 
 - The script now prompts the user to choose between CPU-only and GPU-assisted processing if CUDA is available.
 - Automatic thread detection is used if the number of threads is not specified.
-- GPU and CPU usage can be limited to prevent system slowdowns during processing.
+- GPU and CPU usage can be limited to prevent normal system use slowdowns during processing.
 - Enhanced error handling and logging provide more informative output during processing.
 - The disk space check has been removed to avoid potential errors on some systems.
 
