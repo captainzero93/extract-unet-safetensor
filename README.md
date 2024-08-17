@@ -49,6 +49,11 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
    pip install torch torchvision torchaudio
    ```
 
+Optional: Install psutil for enhanced system resource reporting
+   ```
+pip install psutil
+   ```
+
 ## Usage
 
 Run the script from the command line with the following syntax:
