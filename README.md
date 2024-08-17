@@ -1,11 +1,12 @@
-# UNet Extractor for Stable Diffusion 1.5 and SDXL
+# UNet Extractor and Remover for Stable Diffusion 1.5 and SDXL
 
-This Python script extracts the UNet from SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It allows you to easily separate the UNet component from a full model file, which can be useful for various purposes such as model merging, fine-tuning, or analysis.
+This Python script processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ## Features
 
 - Supports both SD 1.5 and SDXL model architectures
 - Extracts UNet tensors from SafeTensors files
+- Creates a separate SafeTensors file with non-UNet components
 - Saves the extracted UNet as a new SafeTensors file
 - Command-line interface for easy use
 
@@ -29,38 +30,40 @@ This Python script extracts the UNet from SafeTensors files for Stable Diffusion
 Run the script from the command line with the following syntax:
 
 ```
-python unet_extractor.py <input_file> <output_file> --model_type <sd15|sdxl>
+python unet_extractor.py <input_file> <unet_output_file> <non_unet_output_file> --model_type <sd15|sdxl>
 ```
 
 ### Arguments
 
 - `<input_file>`: Path to the input SafeTensors file (full model)
-- `<output_file>`: Path where the extracted UNet will be saved
+- `<unet_output_file>`: Path where the extracted UNet will be saved
+- `<non_unet_output_file>`: Path where the model without UNet will be saved
 - `--model_type`: Specify the model type, either `sd15` for Stable Diffusion 1.5 or `sdxl` for Stable Diffusion XL
 
 ### Examples
 
 For Stable Diffusion 1.5:
 ```
-python unet_extractor.py path/to/sd15_model.safetensors path/to/output_sd15_unet.safetensors --model_type sd15
+python unet_extractor.py path/to/sd15_model.safetensors path/to/output_sd15_unet.safetensors path/to/output_sd15_non_unet.safetensors --model_type sd15
 ```
 
 For Stable Diffusion XL:
 ```
-python unet_extractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors --model_type sdxl
+python unet_extractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors path/to/output_sdxl_non_unet.safetensors --model_type sdxl
 ```
 
 ## How It Works
 
 1. The script opens the input SafeTensors file using the `safetensors` library.
-2. It iterates through all tensors in the file, identifying UNet-related tensors based on their key names.
-3. For SD 1.5, it removes the "model.diffusion_model." prefix from tensor keys.
-4. For SDXL, it keeps the original key names.
+2. It iterates through all tensors in the file, separating UNet-related tensors from other tensors.
+3. For SD 1.5, it removes the "model.diffusion_model." prefix from UNet tensor keys.
+4. For SDXL, it keeps the original key names for both UNet and non-UNet tensors.
 5. The extracted UNet tensors are saved to a new SafeTensors file.
+6. The remaining non-UNet tensors are saved to a separate SafeTensors file.
 
 ## Notes
 
-- Ensure you have sufficient disk space to save the extracted UNet file.
+- Ensure you have sufficient disk space to save both output files.
 - The script processes the tensors in CPU memory, so it should work even on machines without a GPU.
 - Processing large models may take some time, depending on your system's performance.
 
@@ -84,5 +87,3 @@ This project is licensed under the MIT License - see the [LICENSE](link-to-your-
 
 - This script uses the `safetensors` library developed by the Hugging Face team.
 - Inspired by the Stable Diffusion and SDXL projects from Stability AI.
-- DBacon1052 and BlastedRemnants on Reddit for posting about the idea https://www.reddit.com/r/StableDiffusion/comments/1eu4idh/comment/liic8fj/
-
