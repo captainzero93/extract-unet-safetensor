@@ -197,4 +197,4 @@ If you use UNet Extractor and Remover in your research or projects, please cite 
 ## Acknowledgements
 
 - This script uses the `safetensors` library developed by the Hugging Face team.
-- Inspired by the Stable Diffusion and SDXL projects from Stability AI.
+- Inspired by Stable Diffusion and the community.
