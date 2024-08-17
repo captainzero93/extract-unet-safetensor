@@ -1,20 +1,22 @@
-# UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX
-
+## UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX
 This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ## Why UNet Extraction?
+Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders. This is particularly beneficial for models like FLUX, which boasts a large number of parameters. Here's why:
 
-Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders. This is particularly beneficial for models like FLUX, which boasts 12 billion parameters. Here's why:
+Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. By extracting the UNet, you can reuse the same text encoder for multiple models, saving gigabytes of space per additional model.
+Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
 
-1. Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. By extracting the UNet, you can reuse the same text encoder for multiple models, saving gigabytes of space per additional model.
+Practical Example: Multiple full checkpoints of large models like FLUX can quickly consume tens of gigabytes. Using extracted UNets instead can significantly reduce storage requirements.
+Future-Proofing: As models continue to grow in complexity, the space-saving benefits of using UNets become even more significant.
 
-2. Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
+This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits across SD 1.5, SDXL, and open-source FLUX models.
 
-3. Practical Example: Multiple full checkpoints of large models like FLUX can quickly consume tens of gigabytes. Using extracted UNets instead can significantly reduce storage requirements.
+## FLUX Model Support
+This tool supports UNet extraction for open-source FLUX models, including:
+FLUX Dev: A mid-range version with open weights for non-commercial use.
+FLUX Schnell: A faster version optimized for lower-end GPUs.
 
-4. Future-Proofing: As models like FLUX continue to grow in complexity, the space-saving benefits of using UNets become even more significant.
-
-This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits across SD 1.5, SDXL, and FLUX models.
 
 ## Features
 
