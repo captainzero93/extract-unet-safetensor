@@ -1,9 +1,15 @@
 import argparse
-import torch
 from safetensors import safe_open
 from safetensors.torch import save_file
 
-def process_model(input_file, unet_output_file, non_unet_output_file, model_type, device):
+try:
+    import torch
+    CUDA_AVAILABLE = torch.cuda.is_available()
+except ImportError:
+    CUDA_AVAILABLE = False
+
+def process_model(input_file, unet_output_file, non_unet_output_file, model_type, use_cpu):
+    device = "cpu" if use_cpu or not CUDA_AVAILABLE else "cuda"
     print(f"Processing {input_file} on {device}")
     
     with safe_open(input_file, framework="pt", device=device) as f:
@@ -41,10 +47,7 @@ def main():
     
     args = parser.parse_args()
     
-    device = "cpu" if args.use_cpu else "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using device: {device}")
-    
-    process_model(args.input_file, args.unet_output_file, args.non_unet_output_file, args.model_type, device)
+    process_model(args.input_file, args.unet_output_file, args.non_unet_output_file, args.model_type, args.use_cpu)
 
 if __name__ == "__main__":
     main()
