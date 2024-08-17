@@ -3,8 +3,8 @@
 This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ![FLUX Example](https://raw.githubusercontent.com/captainzero93/extract-unet-safetensor/main/fluxeample.png)
-UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
 
+UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
 
 ## Why UNet Extraction?
 
