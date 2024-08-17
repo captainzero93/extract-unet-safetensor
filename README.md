@@ -1,6 +1,6 @@
 # UNet Extractor and Remover for Stable Diffusion 1.5 and SDXL
 
-This Python script processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
+This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ## Why UNet Extraction?
 
@@ -23,22 +23,28 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 - Creates a separate SafeTensors file with non-UNet components
 - Saves the extracted UNet as a new SafeTensors file
 - Command-line interface for easy use
-- CUDA support for faster processing on compatible GPUs
+- Optional CUDA support for faster processing on compatible GPUs
 
 ## Requirements
 
 - Python 3.6+
-- PyTorch
 - safetensors library
+- PyTorch (optional, for CUDA support)
 
 ## Installation
 
-1. Clone this repository or download the `unet_extractor.py` script.
+1. Clone this repository or download the `UNetExtractor.py` script.
 
 2. Install the required libraries:
 
    ```
-   pip install torch safetensors
+   pip install safetensors
+   ```
+
+3. Optionally, if you want CUDA support, install PyTorch:
+
+   ```
+   pip install torch torchvision torchaudio
    ```
 
 ## Usage
@@ -46,7 +52,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 Run the script from the command line with the following syntax:
 
 ```
-python unet_extractor.py <input_file> <unet_output_file> <non_unet_output_file> --model_type <sd15|sdxl> [--use_cpu]
+python UNetExtractor.py <input_file> <unet_output_file> <non_unet_output_file> --model_type <sd15|sdxl> [--use_cpu]
 ```
 
 ### Arguments
@@ -61,17 +67,17 @@ python unet_extractor.py <input_file> <unet_output_file> <non_unet_output_file> 
 
 For Stable Diffusion 1.5 using CUDA (if available):
 ```
-python unet_extractor.py path/to/sd15_model.safetensors path/to/output_sd15_unet.safetensors path/to/output_sd15_non_unet.safetensors --model_type sd15
+python UNetExtractor.py path/to/sd15_model.safetensors path/to/output_sd15_unet.safetensors path/to/output_sd15_non_unet.safetensors --model_type sd15
 ```
 
 For Stable Diffusion XL using CPU:
 ```
-python unet_extractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors path/to/output_sdxl_non_unet.safetensors --model_type sdxl --use_cpu
+python UNetExtractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet.safetensors path/to/output_sdxl_non_unet.safetensors --model_type sdxl --use_cpu
 ```
 
 ## How It Works
 
-1. The script checks for CUDA availability and uses it if present (unless `--use_cpu` is specified).
+1. The script checks for CUDA availability (if PyTorch is installed) and uses it if present (unless `--use_cpu` is specified).
 2. It opens the input SafeTensors file using the `safetensors` library.
 3. The script iterates through all tensors in the file, separating UNet-related tensors from other tensors.
 4. For SD 1.5, it removes the "model.diffusion_model." prefix from UNet tensor keys.
@@ -81,8 +87,9 @@ python unet_extractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet
 
 ## Notes
 
-- The script automatically uses CUDA if available, which can significantly speed up the process for large models.
+- The script automatically uses CUDA if available and PyTorch is installed, which can significantly speed up the process for large models.
 - If you prefer to use CPU even when CUDA is available, use the `--use_cpu` flag.
+- If PyTorch is not installed or CUDA is not available, the script will automatically use CPU processing.
 - Ensure you have sufficient disk space to save both output files.
 - Processing large models may take some time, depending on your system's performance and whether CUDA is used.
 
@@ -90,10 +97,12 @@ python unet_extractor.py path/to/sdxl_model.safetensors path/to/output_sdxl_unet
 
 If you encounter any issues:
 
-1. Ensure you have the latest versions of PyTorch and the `safetensors` library installed.
-2. Check that your input file is a valid SafeTensors file for the specified model type.
-3. Make sure you have read permissions for the input file and write permissions for the output directory.
-4. If you're having issues with CUDA, try running with the `--use_cpu` flag to see if it resolves the problem.
+1. Ensure you have the latest version of the `safetensors` library installed.
+2. If using CUDA, make sure you have a compatible version of PyTorch installed.
+3. Check that your input file is a valid SafeTensors file for the specified model type.
+4. Make sure you have read permissions for the input file and write permissions for the output directory.
+5. If you're having issues with CUDA, try running with the `--use_cpu` flag to see if it resolves the problem.
+6. If you encounter any "module not found" errors, ensure all required libraries are installed.
 
 ## Contributing
 
