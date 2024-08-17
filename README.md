@@ -73,7 +73,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
    ```
    Replace `cu117` with your CUDA version (e.g., `cu116`, `cu118`) if different.
 
-6. Optionally, install psutil for enhanced system resource reporting:
+6. Also ; Optionally, install psutil for enhanced system resource reporting:
    ```
    pip install psutil==5.9.0
    ```
