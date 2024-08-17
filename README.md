@@ -13,7 +13,7 @@ Using UNets instead of full checkpoints can save a significant amount of disk sp
 - Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. By extracting the UNet, you can reuse the same text encoder for multiple models, saving gigabytes of space per additional model.
 - Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
 - Practical Example: Multiple full checkpoints of large models like FLUX can quickly consume tens of gigabytes. Using extracted UNets instead can significantly reduce storage requirements.
-- Future-Proofing: As models continue to grow in complexity, the space-saving benefits of using UNets become even more significant.
+- Future-Proofing: As models continue to grow in complexity, the space-saving benefits of using UNets (may) become even more significant.
 
 This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits across SD 1.5, SDXL, and open-source FLUX models.
 
