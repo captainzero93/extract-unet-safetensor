@@ -2,6 +2,20 @@
 
 This Python script processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5) and Stable Diffusion XL (SDXL) models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
+## Why UNet Extraction?
+
+Using UNets instead of full checkpoints can save a significant amount of disk space, especially for models that utilize large text encoders like T5xxl. Here's why:
+
+1. Space Efficiency: Full checkpoints bundle the UNet, CLIP, VAE, and text encoder together. For models using T5xxl, the text encoder alone can be 5-10GB. By extracting the UNet, you can reuse the same text encoder for multiple models, saving 5-10GB per additional model.
+
+2. Flexibility: You can download the text encoder once and use it with multiple UNet models, reducing redundancy and saving space.
+
+3. Practical Example: Two full checkpoints (e.g., nf4 schnell and dev Flux) might take up 22GB. Using extracted UNets instead, the same two models could occupy only 12GB, plus a single 5GB text encoder shared between them.
+
+4. Future-Proofing: As models grow in complexity, the space-saving benefits of using UNets become even more significant.
+
+This tool helps you extract UNets from full checkpoints, allowing you to take advantage of these space-saving benefits.
+
 ## Features
 
 - Supports both SD 1.5 and SDXL model architectures
@@ -77,11 +91,19 @@ If you encounter any issues:
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check [issues page](link-to-your-issues-page) if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/captainzero93/unet-extractor/issues) if you want to contribute.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](link-to-your-license-file) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+If you use UNet Extractor and Remover in your research or projects, please cite it as follows:
+
+```
+[Joe Faulkner] (captainzero93). (2024). UNet Extractor and Remover for Stable Diffusion 1.5 and SDXL. GitHub. https://github.com/captainzero93/unet-extractor
+```
 
 ## Acknowledgements
 
