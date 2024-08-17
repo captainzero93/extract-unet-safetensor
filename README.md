@@ -210,3 +210,4 @@ If you use UNet Extractor and Remover in your research or projects, please cite 
 - Inspired by Stable Diffusion and the FLUX model community.
 - Special thanks to all contributors and users who have provided feedback and suggestions.
 - u/DBacon1052 
+- u/BlastedRemnants/
