@@ -156,7 +156,7 @@ Example debug output:
 2024-08-17 21:06:31,203 - INFO - Unique key prefixes found: double_blocks, final_layer, guidance_in, img_in, single_blocks, time_in, txt_in, vector_in
 ```
 
-This detailed output helps in identifying issues with tensor classification, resource usage, and overall processing flow.
+This output helps identify issues with tensor classification, resource usage, and overall processing flow.
 
 ## Notes
 
