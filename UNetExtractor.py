@@ -15,24 +15,36 @@ def process_model(input_file, unet_output_file, non_unet_output_file, model_type
     with safe_open(input_file, framework="pt", device=device) as f:
         unet_tensors = {}
         non_unet_tensors = {}
+        total_tensors = 0
+        unet_count = 0
+
         for key in f.keys():
+            total_tensors += 1
             tensor = f.get_tensor(key)
+            
             if model_type == "sd15":
                 if key.startswith("model.diffusion_model."):
                     new_key = key.replace("model.diffusion_model.", "")
                     unet_tensors[new_key] = tensor
+                    unet_count += 1
                 else:
                     non_unet_tensors[key] = tensor
             elif model_type == "flux":
-                if key.startswith("unet."):
+                if any(key.startswith(prefix) for prefix in ["unet.", "diffusion_model.", "model.diffusion_model."]):
                     unet_tensors[key] = tensor
+                    unet_count += 1
                 else:
                     non_unet_tensors[key] = tensor
             elif model_type == "sdxl":
                 if key.startswith("model.diffusion_model."):
                     unet_tensors[key] = tensor
+                    unet_count += 1
                 else:
                     non_unet_tensors[key] = tensor
+
+        print(f"Total tensors processed: {total_tensors}")
+        print(f"UNet tensors: {unet_count}")
+        print(f"Non-UNet tensors: {total_tensors - unet_count}")
 
     print(f"Saving extracted UNet to {unet_output_file}")
     save_file(unet_tensors, unet_output_file)
