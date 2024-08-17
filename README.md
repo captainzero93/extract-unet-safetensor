@@ -14,15 +14,14 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 
 ## Features
 
-- Supports SD 1.5, SDXL, and FLUX model architectures
+- This tool supports UNet extraction for open-source FLUX models, including:
+FLUX Dev: A mid-range version with open weights for non-commercial use.
+FLUX Schnell: A faster version optimized for lower-end GPUs.
 - Extracts UNet tensors from SafeTensors files
 - Creates a separate SafeTensors file with non-UNet components
 - Saves the extracted UNet as a new SafeTensors file
 - Command-line interface for easy use
 - Optional CUDA support for faster processing on compatible GPUs
-- This tool supports UNet extraction for open-source FLUX models, including:
-FLUX Dev: A mid-range version with open weights for non-commercial use.
-FLUX Schnell: A faster version optimized for lower-end GPUs.
 
 ## Requirements
 
