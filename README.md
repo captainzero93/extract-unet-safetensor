@@ -4,7 +4,7 @@ This Python script (UNetExtractor.py) processes SafeTensors files for Stable Dif
 
 ![FLUX Example](https://raw.githubusercontent.com/captainzero93/extract-unet-safetensor/main/fluxeample.png)
 
-UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
+above example: UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
 
 ## Why UNet Extraction?
 
