@@ -1,12 +1,22 @@
 # UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX
 
-Forge Extention provided by rauldlnx10 here: https://github.com/captainzero93/extract-unet-safetensor/issues/2 
-
 This Python script (UNetExtractor.py) processes SafeTensors files for Stable Diffusion 1.5 (SD 1.5), Stable Diffusion XL (SDXL), and FLUX models. It extracts the UNet into a separate file and creates a new file with the remaining model components (without the UNet).
 
 ![FLUX Example](https://raw.githubusercontent.com/captainzero93/extract-unet-safetensor/main/fluxeample.png)
 
-above example: UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
+Above example: UNetExtractor.py flux1-dev.safetensors flux1-dev_unet.safetensors flux1-dev_non_unet.safetensors --model_type flux --verbose
+
+## AUTOMATIC1111 Extension for UNet Loading
+
+We've developed an extension for AUTOMATIC1111's Stable Diffusion Web UI that allows you to load and use the extracted UNet files directly within the interface. This extension seamlessly integrates with the txt2img workflow, enabling you to utilize the space-saving benefits of separated UNet files without compromising on functionality.
+
+### Extension Features:
+- Load separate UNet and non-UNet files
+- Combine them on-the-fly for use in generation
+- Compatible with files created by this UNet Extractor tool
+- Integrated into the AUTOMATIC1111 Web UI for easy use
+
+To use this extension, please visit our [UNet Loader Extension Repository](https://github.com/captainzero93/unet-loader-extension) for installation and usage instructions.
 
 ## Why UNet Extraction?
 
@@ -36,6 +46,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
 - GPU and CPU usage limiting options
 - Enhanced error handling and logging
 - Detailed debugging information for troubleshooting
+- AUTOMATIC1111 extension for seamless integration with Stable Diffusion Web UI
 
 ## Requirements
 
@@ -75,7 +86,7 @@ This tool helps you extract UNets from full checkpoints, allowing you to take ad
    ```
    Replace `cu117` with your CUDA version (e.g., `cu116`, `cu118`) if different.
 
-6. Also ; Optionally, install psutil for enhanced system resource reporting:
+6. Optionally, install psutil for enhanced system resource reporting:
    ```
    pip install psutil==5.9.0
    ```
@@ -131,6 +142,17 @@ python UNetExtractor.py path/to/flux_model.safetensors path/to/output_flux_unet.
 9. The extracted UNet tensors are saved to a new SafeTensors file.
 10. The remaining non-UNet tensors are saved to a separate SafeTensors file.
 11. RAM offloading is implemented to manage memory usage, especially for large models.
+
+## Using Extracted UNets with AUTOMATIC1111
+
+After extracting UNet files using this tool, you can easily use them in AUTOMATIC1111's Stable Diffusion Web UI:
+
+1. Install our UNet Loader extension in your AUTOMATIC1111 setup.
+2. Place the extracted UNet and non-UNet files in the extension's designated folder.
+3. Use the extension's interface to select and load your desired UNet and non-UNet components.
+4. Generate images using txt2img as usual, now benefiting from the space-saving and flexibility of separated UNet files.
+
+For detailed instructions, please refer to the [UNet Loader Extension Repository](https://github.com/captainzero93/unet-loader-extension).
 
 ## Debugging Information
 
@@ -213,4 +235,5 @@ If you use UNet Extractor and Remover in your research or projects, please cite 
 - Special thanks to all contributors and users who have provided feedback and suggestions.
 - u/DBacon1052 
 - u/BlastedRemnants/
-- rauldlnx10 on GIT for the Forge extension.
+- rauldlnx10 on GitHub for the Forge extension.
+- All users and contributors of the AUTOMATIC1111 Stable Diffusion Web UI community.
