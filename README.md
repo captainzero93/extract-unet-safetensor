@@ -16,7 +16,7 @@ We've developed an extension for AUTOMATIC1111's Stable Diffusion Web UI that al
 - Compatible with files created by this UNet Extractor tool
 - Integrated into the AUTOMATIC1111 Web UI for easy use
 
-To use this extension, please visit our [UNet Loader Extension Repository](https://github.com/captainzero93/unet-loader-extension) for installation and usage instructions.
+To use this extension, please visit our [UNet Loader Extension Repository]([https://github.com/captainzero93/unet-loader-extension](https://github.com/captainzero93/load-extracted-unet-automatic1111)) for installation and usage instructions.
 
 ## Why UNet Extraction?
 
