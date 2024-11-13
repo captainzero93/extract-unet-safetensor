@@ -225,7 +225,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 If you use UNet Extractor and Remover in your research or projects, please cite it as follows:
 
 ```
-[Joe Faulkner] (captainzero93). (2024). UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX. GitHub. https://github.com/captainzero93/unet-extractor
+[For commercial licensing cyberjunk77@gmail.com] (captainzero93). (2024). UNet Extractor and Remover for Stable Diffusion 1.5, SDXL, and FLUX. GitHub. https://github.com/captainzero93/unet-extractor
 ```
 
 ## Acknowledgements
